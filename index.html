@@ -1,923 +1,279 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>로또 번호 추첨기</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --gold: #d4a017;
-    --gold-light: #f0c040;
-    --gold-dim: #8a6810;
-    --bg-base: #080808;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --text: #e8e0d0;
-    --text-dim: #7a7060;
-    --card-border: rgba(212,160,23,0.1);
-    --card-shadow: rgba(0,0,0,0.6);
-    --slot-bg: rgba(255,255,255,0.02);
-    --slot-border: rgba(212,160,23,0.18);
-    --slot-bonus-border: rgba(255,255,255,0.1);
-    --legend-border: rgba(255,255,255,0.05);
-    --history-border: rgba(255,255,255,0.04);
-    --bg-grad1: rgba(180,130,10,0.08);
-    --bg-grad2: rgba(0,40,80,0.15);
-    --star-opacity: 1;
-    --btn-sec-bg: #1e1e1e;
-    --btn-sec-border: rgba(255,255,255,0.07);
-    --theme-transition: background 0.35s, color 0.35s, border-color 0.35s, box-shadow 0.35s;
-  }
 
-  html[data-theme="light"] {
-    --gold: #b07808;
-    --gold-light: #c08818;
-    --gold-dim: #987020;
-    --bg-base: #f7f2e8;
-    --surface: #ffffff;
-    --surface2: #f0ebe0;
-    --text: #1a1200;
-    --text-dim: #806840;
-    --card-border: rgba(160,120,10,0.15);
-    --card-shadow: rgba(0,0,0,0.1);
-    --slot-bg: rgba(0,0,0,0.03);
-    --slot-border: rgba(160,120,10,0.25);
-    --slot-bonus-border: rgba(0,0,0,0.12);
-    --legend-border: rgba(0,0,0,0.08);
-    --history-border: rgba(0,0,0,0.06);
-    --bg-grad1: rgba(200,150,10,0.07);
-    --bg-grad2: rgba(0,60,120,0.05);
-    --star-opacity: 0;
-    --btn-sec-bg: #ede8dc;
-    --btn-sec-border: rgba(0,0,0,0.1);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg-base);
-    color: var(--text);
-    font-family: 'Noto Sans KR', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    transition: var(--theme-transition);
-  }
-
-  /* === BACKGROUND === */
-  .bg {
-    position: fixed; inset: 0; z-index: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, var(--bg-grad1) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 10% 100%, var(--bg-grad2) 0%, transparent 50%),
-      var(--bg-base);
-    transition: background 0.35s;
-  }
-  .bg::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  /* === STARS === */
-  .stars {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-  }
-  .star {
-    position: absolute;
-    width: 2px; height: 2px;
-    border-radius: 50%;
-    background: rgba(212,160,23,0.4);
-    animation: twinkle var(--dur, 3s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
-    opacity: var(--star-opacity);
-    transition: opacity 0.5s;
-  }
-
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.1; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.5); }
-  }
-
-  /* === LAYOUT === */
-  .wrapper {
-    position: relative; z-index: 1;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 60px 24px 100px;
-  }
-
-  /* === HEADER === */
-  .header {
-    text-align: center;
-    margin-bottom: 56px;
-  }
-
-  .header-eyebrow {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 0.35em;
-    font-size: 0.8rem;
-    color: var(--gold);
-    opacity: 0.7;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-  }
-
-  .header-title {
-    font-family: 'Noto Serif KR', serif;
-    font-weight: 900;
-    font-size: clamp(2.4rem, 8vw, 4.2rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #f0c040 0%, #d4a017 40%, #a07810 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 12px;
-  }
-
-  .header-sub {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    letter-spacing: 0.05em;
-  }
-
-  .header-line {
-    width: 60px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 20px auto 0;
-  }
-
-  /* === CARD === */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 40px 32px;
-    box-shadow:
-      0 8px 40px var(--card-shadow),
-      inset 0 1px 0 rgba(255,255,255,0.04);
-    margin-bottom: 24px;
-    transition: var(--theme-transition);
-  }
-
-  /* === SECTION LABEL === */
-  .section-label {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 0.2em;
-    font-size: 0.7rem;
-    color: var(--gold-dim);
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(212,160,23,0.15);
-  }
-
-  /* === BALLS DISPLAY === */
-  .balls-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    min-height: 100px;
-  }
-
-  .ball-slot {
-    width: 78px; height: 78px;
-    border-radius: 50%;
-    border: 2px dashed var(--slot-border);
-    background: var(--slot-bg);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    transition: border-color 0.35s, background 0.35s;
-  }
-
-  .ball-slot.bonus {
-    border-color: var(--slot-bonus-border);
-    margin-left: 8px;
-  }
-
-  .ball-slot.bonus::before {
-    content: 'BONUS';
-    position: absolute;
-    top: -22px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    color: var(--gold-dim);
-  }
-
-  .separator {
-    font-size: 1.4rem;
-    color: rgba(212,160,23,0.3);
-    font-weight: 300;
-    margin: 0 4px;
-    align-self: center;
-    margin-top: 4px;
-  }
-
-  .ball {
-    width: 74px; height: 74px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.7rem;
-    letter-spacing: 0.02em;
-    color: #fff;
-    position: relative;
-    cursor: default;
-    animation: ballPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    box-shadow:
-      inset -3px -3px 8px rgba(0,0,0,0.35),
-      inset 4px 4px 10px rgba(255,255,255,0.25),
-      0 6px 20px rgba(0,0,0,0.5);
-  }
-
-  .ball::after {
-    content: '';
-    position: absolute;
-    top: 14%; left: 20%;
-    width: 28%; height: 18%;
-    background: rgba(255,255,255,0.35);
-    border-radius: 50%;
-    transform: rotate(-30deg);
-    filter: blur(2px);
-  }
-
-  .ball.c-yellow { background: radial-gradient(circle at 38% 35%, #ffe566, #fbc400 55%, #c8960a); }
-  .ball.c-blue   { background: radial-gradient(circle at 38% 35%, #4da8d4, #0066aa 55%, #004477); }
-  .ball.c-red    { background: radial-gradient(circle at 38% 35%, #f06060, #cc0000 55%, #880000); }
-  .ball.c-gray   { background: radial-gradient(circle at 38% 35%, #999, #555 55%, #333); }
-  .ball.c-green  { background: radial-gradient(circle at 38% 35%, #40c880, #0a8a50 55%, #065530); }
-
-  @keyframes ballPop {
-    0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
-    60%  { transform: scale(1.1) rotate(10deg); opacity: 1; }
-    80%  { transform: scale(0.95) rotate(-5deg); }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-
-  /* === BUTTON === */
-  .btn-wrap {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 36px;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    position: relative;
-    padding: 0 40px;
-    height: 56px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Noto Serif KR', serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
-    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
-    overflow: hidden;
-  }
-
-  .btn:active { transform: scale(0.97); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #f0c040, #d4a017 50%, #b08010);
-    color: #1a1000;
-    box-shadow: 0 4px 20px rgba(212,160,23,0.35), 0 1px 0 rgba(255,255,255,0.15) inset;
-    min-width: 180px;
-  }
-
-  .btn-primary:hover {
-    box-shadow: 0 6px 30px rgba(212,160,23,0.55), 0 1px 0 rgba(255,255,255,0.15) inset;
-    transform: translateY(-1px);
-  }
-
-  .btn-primary:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .btn-secondary {
-    background: var(--btn-sec-bg);
-    color: var(--text-dim);
-    border: 1px solid var(--btn-sec-border);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    transition: var(--theme-transition), transform 0.15s;
-  }
-
-  .btn-secondary:hover {
-    color: var(--gold-light);
-    border-color: rgba(180,130,10,0.3);
-  }
-
-  .btn-ripple {
-    position: absolute; inset: 0;
-    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-    transform: scale(0); opacity: 0;
-    transition: transform 0.5s, opacity 0.5s;
-    pointer-events: none;
-  }
-
-  .btn-primary:active .btn-ripple {
-    transform: scale(2.5); opacity: 1;
-    transition: none;
-  }
-
-  /* === STATUS TEXT === */
-  .status {
-    text-align: center;
-    font-size: 0.82rem;
-    color: var(--text-dim);
-    margin-top: 20px;
-    min-height: 20px;
-    letter-spacing: 0.04em;
-    transition: color 0.3s;
-  }
-
-  .status.highlight { color: var(--gold-light); }
-
-  /* === NUMBER LEGEND === */
-  .legend {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid var(--legend-border);
-    transition: border-color 0.35s;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-  }
-
-  .legend-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  /* === HISTORY === */
-  .history-card { display: none; }
-  .history-card.visible { display: block; }
-
-  .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 320px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-
-  .history-list::-webkit-scrollbar { width: 4px; }
-  .history-list::-webkit-scrollbar-track { background: transparent; }
-  .history-list::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
-
-  .history-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background: var(--surface2);
-    border-radius: 10px;
-    border: 1px solid var(--history-border);
-    animation: fadeSlide 0.4s ease forwards;
-    transition: var(--theme-transition);
-  }
-
-  @keyframes fadeSlide {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-
-  .history-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    color: var(--gold-dim);
-    min-width: 24px;
-  }
-
-  .history-balls {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .mini-ball {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.75rem;
-    color: #fff;
-    flex-shrink: 0;
-    box-shadow: inset -1px -1px 3px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,255,255,0.2);
-  }
-
-  .mini-sep {
-    font-size: 0.8rem;
-    color: rgba(212,160,23,0.25);
-    margin: 0 1px;
-  }
-
-  .history-time {
-    margin-left: auto;
-    font-size: 0.68rem;
-    color: var(--text-dim);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .history-clear {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 14px;
-  }
-
-  .btn-text {
-    background: none; border: none; cursor: pointer;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    letter-spacing: 0.05em;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: color 0.2s;
-    font-family: 'Noto Sans KR', sans-serif;
-  }
-
-  .btn-text:hover { color: #cc5555; }
-
-  /* === CONFETTI === */
-  .confetti-layer {
-    position: fixed; inset: 0; z-index: 100;
-    pointer-events: none; overflow: hidden;
-  }
-
-  .conf-piece {
-    position: absolute;
-    width: 8px; height: 10px;
-    top: -20px;
-    border-radius: 2px;
-    animation: confFall var(--dur, 1.5s) ease-in var(--delay, 0s) forwards;
-    transform-origin: center;
-  }
-
-  @keyframes confFall {
-    0%   { transform: translateY(0) rotate(0deg) scaleX(1); opacity: 1; }
-    50%  { transform: translateY(50vh) rotate(360deg) scaleX(-1); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(720deg) scaleX(1); opacity: 0; }
-  }
-
-  /* === SETTINGS === */
-  .settings-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-  }
-
-  .toggle-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.82rem;
-    color: var(--text-dim);
-  }
-
-  .toggle {
-    position: relative;
-    width: 40px; height: 22px;
-  }
-
-  .toggle input { opacity: 0; width: 0; height: 0; }
-
-  .toggle-slider {
-    position: absolute; inset: 0;
-    background: var(--btn-sec-bg);
-    border: 1px solid var(--btn-sec-border);
-    border-radius: 11px;
-    cursor: pointer;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .toggle-slider::after {
-    content: '';
-    position: absolute;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--text-dim);
-    top: 2px; left: 2px;
-    transition: transform 0.3s, background 0.3s;
-  }
-
-  .toggle input:checked + .toggle-slider { background: var(--gold-dim); border-color: var(--gold); }
-  .toggle input:checked + .toggle-slider::after {
-    transform: translateX(18px);
-    background: var(--gold-light);
-  }
-
-  /* === THEME TOGGLE BUTTON === */
-  .theme-btn {
-    position: fixed;
-    top: 20px; right: 20px;
-    z-index: 200;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--card-border);
-    background: var(--surface);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 16px var(--card-shadow);
-    transition: var(--theme-transition), transform 0.2s;
-    outline: none;
-    overflow: hidden;
-  }
-
-  .theme-btn:hover { transform: scale(1.1) rotate(15deg); }
-  .theme-btn:active { transform: scale(0.95); }
-
-  .theme-btn .icon-sun,
-  .theme-btn .icon-moon {
-    position: absolute;
-    width: 20px; height: 20px;
-    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
-  }
-
-  /* dark mode: show moon, hide sun */
-  .theme-btn .icon-sun  { transform: rotate(-90deg) scale(0); opacity: 0; }
-  .theme-btn .icon-moon { transform: rotate(0deg) scale(1);   opacity: 1; }
-
-  /* light mode: show sun, hide moon */
-  html[data-theme="light"] .theme-btn .icon-sun  { transform: rotate(0deg) scale(1);    opacity: 1; }
-  html[data-theme="light"] .theme-btn .icon-moon { transform: rotate(90deg) scale(0);   opacity: 0; }
-
-  /* === RESPONSIVE === */
-  @media (max-width: 480px) {
-    .card { padding: 28px 18px; }
-    .ball-slot { width: 56px; height: 56px; }
-    .ball { width: 52px; height: 52px; font-size: 1.3rem; }
-    .balls-row { gap: 7px; }
-    .separator { display: none; }
-    .btn-primary { min-width: 140px; }
-    .theme-btn { top: 12px; right: 12px; }
-  }
-</style>
-</head>
-<body>
-
-<div class="bg"></div>
-<div class="stars" id="stars"></div>
-<div class="confetti-layer" id="confetti"></div>
-
-<button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="테마 변경" aria-label="다크/라이트 모드 전환">
-  <!-- Sun icon -->
-  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1"  x2="12" y2="3"/>
-    <line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22"  x2="5.64" y2="5.64"/>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/>
-    <line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-  </svg>
-  <!-- Moon icon -->
-  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-  </svg>
-</button>
-
-<div class="wrapper">
-  <header class="header">
-    <div class="header-eyebrow">Korean Lottery · 1~45</div>
-    <h1 class="header-title">로또 번호 추첨기</h1>
-    <p class="header-sub">6개의 행운의 숫자를 뽑아보세요</p>
-    <div class="header-line"></div>
-  </header>
-
-  <div class="card">
-    <div class="section-label">번호 추첨</div>
-
-    <div class="settings-row">
-      <label class="toggle-group">
-        <span>보너스 번호</span>
-        <label class="toggle">
-          <input type="checkbox" id="toggleBonus" checked>
-          <span class="toggle-slider"></span>
-        </label>
-      </label>
-      <label class="toggle-group">
-        <span>순서 정렬</span>
-        <label class="toggle">
-          <input type="checkbox" id="toggleSort">
-          <span class="toggle-slider"></span>
-        </label>
-      </label>
-    </div>
-
-    <div class="balls-row" id="ballsRow">
-      <div class="ball-slot" id="slot0"></div>
-      <div class="ball-slot" id="slot1"></div>
-      <div class="ball-slot" id="slot2"></div>
-      <div class="ball-slot" id="slot3"></div>
-      <div class="ball-slot" id="slot4"></div>
-      <div class="ball-slot" id="slot5"></div>
-      <div class="separator" id="bonusSep">+</div>
-      <div class="ball-slot bonus" id="slotBonus"></div>
-    </div>
-
-    <p class="status" id="status">버튼을 눌러 번호를 추첨하세요</p>
-
-    <div class="btn-wrap">
-      <button class="btn btn-primary" id="drawBtn" onclick="draw()">
-        <span class="btn-ripple"></span>
-        ✦ 번호 추첨
-      </button>
-      <button class="btn btn-secondary" id="resetBtn" onclick="reset()" style="display:none">
-        다시 추첨
-      </button>
-    </div>
-
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#fbc400"></div>1–10</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0066aa"></div>11–20</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#cc0000"></div>21–30</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#555"></div>31–40</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0a8a50"></div>41–45</div>
-    </div>
-  </div>
-
-  <div class="card history-card" id="historyCard">
-    <div class="section-label">추첨 기록</div>
-    <div class="history-list" id="historyList"></div>
-    <div class="history-clear">
-      <button class="btn-text" onclick="clearHistory()">기록 지우기</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  /* ─── THEME ─── */
-  (function() {
-    const saved = localStorage.getItem('lotto-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = saved || (prefersDark ? 'dark' : 'light');
-    if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
-  })();
-
-  function toggleTheme() {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    if (isLight) {
-      document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('lotto-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('lotto-theme', 'light');
-    }
-  }
-
-  /* ─── STARS ─── */
-  const starsEl = document.getElementById('stars');
-  for (let i = 0; i < 70; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--delay:${Math.random()*4}s;opacity:${0.1+Math.random()*0.5};`;
-    starsEl.appendChild(s);
-  }
-
-  /* ─── STATE ─── */
-  let history = JSON.parse(localStorage.getItem('lotto-history') || '[]');
-  let drawing = false;
-
-  /* ─── COLORS ─── */
-  function ballClass(n) {
-    if (n <= 10) return 'c-yellow';
-    if (n <= 20) return 'c-blue';
-    if (n <= 30) return 'c-red';
-    if (n <= 40) return 'c-gray';
-    return 'c-green';
-  }
-
-  function colorOf(n) {
-    if (n <= 10) return 'radial-gradient(circle at 38% 35%,#ffe566,#fbc400 55%,#c8960a)';
-    if (n <= 20) return 'radial-gradient(circle at 38% 35%,#4da8d4,#0066aa 55%,#004477)';
-    if (n <= 30) return 'radial-gradient(circle at 38% 35%,#f06060,#cc0000 55%,#880000)';
-    if (n <= 40) return 'radial-gradient(circle at 38% 35%,#999,#555 55%,#333)';
-    return 'radial-gradient(circle at 38% 35%,#40c880,#0a8a50 55%,#065530)';
-  }
-
-  /* ─── RANDOM ─── */
-  function pickNumbers(count, max) {
-    const pool = Array.from({length: max}, (_, i) => i + 1);
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    return pool.slice(0, count);
-  }
-
-  /* ─── BALL DOM ─── */
-  function createBall(n) {
-    const el = document.createElement('div');
-    el.className = `ball ${ballClass(n)}`;
-    el.textContent = n;
-    return el;
-  }
-
-  /* ─── DRAW ─── */
-  async function draw() {
-    if (drawing) return;
-    drawing = true;
-
-    const doSort   = document.getElementById('toggleSort').checked;
-    const doBonus  = document.getElementById('toggleBonus').checked;
-    const drawBtn  = document.getElementById('drawBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const status   = document.getElementById('status');
-
-    drawBtn.disabled = true;
-    status.textContent = '추첨 중...';
-    status.classList.remove('highlight');
-
-    document.getElementById('bonusSep').style.display = doBonus ? '' : 'none';
-    document.getElementById('slotBonus').style.display = doBonus ? '' : 'none';
-
-    // Clear slots
-    for (let i = 0; i <= 6; i++) {
-      const el = document.getElementById(i < 6 ? `slot${i}` : 'slotBonus');
-      if (el) el.innerHTML = '';
-    }
-
-    // Pick numbers
-    const all = pickNumbers(doBonus ? 7 : 6, 45);
-    let main = all.slice(0, 6);
-    const bonus = all[6];
-    if (doSort) main = [...main].sort((a,b) => a-b);
-
-    // Animate balls sequentially
-    for (let i = 0; i < 6; i++) {
-      await wait(doSort ? 280 : 320);
-      const slot = document.getElementById(`slot${i}`);
-      slot.innerHTML = '';
-      const ball = createBall(main[i]);
-      slot.appendChild(ball);
-    }
-
-    if (doBonus) {
-      await wait(420);
-      const slotB = document.getElementById('slotBonus');
-      slotB.innerHTML = '';
-      slotB.appendChild(createBall(bonus));
-    }
-
-    await wait(200);
-
-    status.textContent = doBonus
-      ? `당첨번호: ${main.join(', ')} + 보너스 ${bonus}`
-      : `당첨번호: ${main.join(', ')}`;
-    status.classList.add('highlight');
-
-    drawBtn.style.display = 'none';
-    resetBtn.style.display = '';
-
-    // Confetti
-    burst();
-
-    // History
-    saveHistory(main, doBonus ? bonus : null);
-
-    drawing = false;
-  }
-
-  function wait(ms) {
-    return new Promise(res => setTimeout(res, ms));
-  }
-
-  function reset() {
-    document.getElementById('drawBtn').disabled = false;
-    document.getElementById('drawBtn').style.display = '';
-    document.getElementById('resetBtn').style.display = 'none';
-    document.getElementById('status').textContent = '버튼을 눌러 번호를 추첨하세요';
-    document.getElementById('status').classList.remove('highlight');
-    for (let i = 0; i < 6; i++) document.getElementById(`slot${i}`).innerHTML = '';
-    document.getElementById('slotBonus').innerHTML = '';
-  }
-
-  /* ─── CONFETTI ─── */
-  function burst() {
-    const layer = document.getElementById('confetti');
-    layer.innerHTML = '';
-    const colors = ['#fbc400','#0066aa','#cc0000','#0a8a50','#d4a017','#f0c040','#fff'];
-    for (let i = 0; i < 80; i++) {
-      const p = document.createElement('div');
-      p.className = 'conf-piece';
-      p.style.cssText = `
-        left: ${10 + Math.random()*80}%;
-        background: ${colors[i % colors.length]};
-        --dur: ${0.9 + Math.random()*1.2}s;
-        --delay: ${Math.random()*0.6}s;
-        transform: rotate(${Math.random()*360}deg);
-        width: ${5+Math.random()*8}px;
-        height: ${6+Math.random()*10}px;
-        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-      `;
-      layer.appendChild(p);
-    }
-    setTimeout(() => layer.innerHTML = '', 2500);
-  }
-
-  /* ─── HISTORY ─── */
-  function saveHistory(main, bonus) {
-    const entry = { main, bonus, time: new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}) };
-    history.unshift(entry);
-    if (history.length > 20) history.pop();
-    localStorage.setItem('lotto-history', JSON.stringify(history));
-    renderHistory();
-  }
-
-  function renderHistory() {
-    const card = document.getElementById('historyCard');
-    const list = document.getElementById('historyList');
-    if (!history.length) { card.classList.remove('visible'); return; }
-    card.classList.add('visible');
-
-    list.innerHTML = '';
-    history.forEach((entry, i) => {
-      const row = document.createElement('div');
-      row.className = 'history-item';
-
-      const numEl = document.createElement('div');
-      numEl.className = 'history-num';
-      numEl.textContent = `#${i+1}`;
-
-      const ballsEl = document.createElement('div');
-      ballsEl.className = 'history-balls';
-
-      entry.main.forEach(n => {
-        const b = document.createElement('div');
-        b.className = 'mini-ball';
-        b.style.background = colorOf(n);
-        b.textContent = n;
-        ballsEl.appendChild(b);
-      });
-
-      if (entry.bonus != null) {
-        const sep = document.createElement('span');
-        sep.className = 'mini-sep'; sep.textContent = '+';
-        ballsEl.appendChild(sep);
-        const b = document.createElement('div');
-        b.className = 'mini-ball';
-        b.style.background = colorOf(entry.bonus);
-        b.textContent = entry.bonus;
-        ballsEl.appendChild(b);
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>GLAM.AI | Style Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Hanken+Grotesk:wght@400;600&family=Space+Grotesk:wght@700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Space+Grotesk:wght@100..900&family=Syne:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#353436",
+                    "secondary": "#ffaedd",
+                    "secondary-fixed": "#ffd8eb",
+                    "secondary-fixed-dim": "#ffaedd",
+                    "on-tertiary-container": "#c4faff",
+                    "surface-dim": "#131314",
+                    "on-secondary-fixed-variant": "#880069",
+                    "inverse-surface": "#e5e2e3",
+                    "surface-container": "#201f20",
+                    "on-primary-fixed-variant": "#0035be",
+                    "tertiary-container": "#007981",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed": "#dde1ff",
+                    "background": "#131314",
+                    "outline": "#8e90a2",
+                    "on-tertiary": "#00363a",
+                    "on-background": "#e5e2e3",
+                    "outline-variant": "#434656",
+                    "inverse-primary": "#124af0",
+                    "surface-container-low": "#1c1b1c",
+                    "primary-container": "#2e5bff",
+                    "on-primary-fixed": "#001356",
+                    "surface-container-high": "#2a2a2b",
+                    "primary": "#b8c3ff",
+                    "on-primary": "#002388",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed": "#002022",
+                    "on-secondary-container": "#540040",
+                    "surface": "#131314",
+                    "on-secondary": "#600049",
+                    "on-surface": "#e5e2e3",
+                    "tertiary-fixed-dim": "#00dbe9",
+                    "primary-fixed-dim": "#b8c3ff",
+                    "on-tertiary-fixed-variant": "#004f54",
+                    "surface-bright": "#3a393a",
+                    "on-surface-variant": "#c4c5d9",
+                    "inverse-on-surface": "#313031",
+                    "surface-container-highest": "#353436",
+                    "surface-container-lowest": "#0e0e0f",
+                    "on-primary-container": "#efefff",
+                    "surface-tint": "#b8c3ff",
+                    "tertiary-fixed": "#7df4ff",
+                    "secondary-container": "#ff36c8",
+                    "tertiary": "#00dbe9",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed": "#3b002c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "container-margin": "24px",
+                    "gutter": "16px",
+                    "section-gap": "80px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Syne"],
+                    "display-xl": ["Syne"],
+                    "title-md": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "body-sm": ["Hanken Grotesk"],
+                    "label-caps": ["Space Grotesk"],
+                    "headline-lg": ["Syne"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["32px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "display-xl": ["80px", {"lineHeight": "88px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-lg": ["48px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
       }
+    </script>
+<style>
+        @keyframes scanline {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(120px) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            to { transform: rotate(360deg) translateX(0px) rotate(-360deg); opacity: 0; }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px #b8c3ff) drop-shadow(0 0 10px #ffaedd); }
+            50% { filter: drop-shadow(0 0 15px #b8c3ff) drop-shadow(0 0 30px #ffaedd); }
+        }
+        .scanning-bar {
+            background: linear-gradient(to right, transparent, #b8c3ff, #ffaedd, #b8c3ff, transparent);
+            height: 4px;
+            width: 100%;
+            position: absolute;
+            z-index: 10;
+            filter: blur(2px);
+            animation: scanline 3s linear infinite;
+        }
+        .orbit-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            animation: orbit 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .glass-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-container-margin h-16 shadow-[0_0_20px_rgba(184,195,255,0.2)]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200">menu</span>
+<h1 class="font-display-xl text-headline-lg-mobile bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">GLAM.AI</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200">notifications</span>
+</div>
+</header>
+<!-- Main Content: Scanner Canvas -->
+<main class="relative h-screen w-full flex flex-col items-center justify-center pt-16 pb-20">
+<!-- Background Fluid Mesh -->
 
-      const timeEl = document.createElement('div');
-      timeEl.className = 'history-time';
-      timeEl.textContent = entry.time;
+<!-- Scanning Visual Area -->
+<div class="relative w-full max-w-md aspect-[3/4] mx-auto overflow-hidden rounded-3xl glass-blur shadow-2xl z-20 group">
+<!-- User Uploaded Image -->
+<img class="w-full h-full object-cover opacity-80 mix-blend-luminosity grayscale group-hover:grayscale-0 transition-all duration-1000" src="screen.png" alt="Style Analysis"/>
+<!-- Scanning Elements -->
+<div class="scanning-bar"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
+<!-- Floating Orbiting Icons -->
+<div class="orbit-item" style="animation-delay: 0s;"><span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">apparel</span></div>
+<div class="orbit-item" style="animation-delay: 0.5s;"><span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">ice_skating</span></div>
+<div class="orbit-item" style="animation-delay: 1.2s;"><span class="material-symbols-outlined text-tertiary text-4xl" style="font-variation-settings: 'FILL' 1;">watch</span></div>
+<div class="orbit-item" style="animation-delay: 1.8s;"><span class="material-symbols-outlined text-secondary text-2xl" style="font-variation-settings: 'FILL' 1;">diamond</span></div>
+<div class="orbit-item" style="animation-delay: 2.5s;"><span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">checkroom</span></div>
+<!-- Central Scanning Core Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="relative flex items-center justify-center">
+<!-- Progress Circle -->
+<svg class="w-48 h-48">
+<circle class="text-white/5" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="4"></circle>
+<circle class="progress-ring-circle text-secondary" cx="96" cy="96" fill="transparent" id="progressCircle" r="80" stroke="currentColor" stroke-dasharray="502.65" stroke-dashoffset="502.65" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-xl text-headline-lg-mobile text-white drop-shadow-lg" id="progressPercent">0%</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Analyzing</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Status Text -->
+<div class="mt-12 text-center z-30 px-container-margin">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile tracking-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent mb-2">
+                GLAM.AI IS SCANNING YOUR LOOK
+            </h2>
+<div class="flex items-center justify-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary animate-ping"></div>
+<p class="font-body-sm text-on-surface-variant italic" id="statusUpdate">Identifying silhouette structures...</p>
+</div>
+</div>
+<!-- Style Tags Loading -->
+<div class="mt-8 flex flex-wrap justify-center gap-3 px-container-margin z-30">
+<div class="px-4 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary font-label-caps text-label-caps animate-pulse">VAPORWAVE</div>
+<div class="px-4 py-1 rounded-full border border-secondary/30 bg-secondary/5 text-secondary font-label-caps text-label-caps animate-pulse" style="animation-delay: 0.2s">AVANT-GARDE</div>
+<div class="px-4 py-1 rounded-full border border-tertiary/30 bg-tertiary/5 text-tertiary font-label-caps text-label-caps animate-pulse" style="animation-delay: 0.4s">CYBERPUNK</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container/80 backdrop-blur-2xl border-t border-white/10 rounded-t-xl h-20 px-4 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(255,174,221,0.15)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary hover:opacity-100 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary bg-secondary/10 rounded-xl py-1 px-3 scale-110 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-label-caps text-label-caps">Style</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary hover:opacity-100 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">checkroom</span>
+<span class="font-label-caps text-label-caps">Closet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary hover:opacity-100 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+<script>
+        const progressCircle = document.getElementById('progressCircle');
+        const progressPercent = document.getElementById('progressPercent');
+        const statusUpdate = document.getElementById('statusUpdate');
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
 
-      row.appendChild(numEl);
-      row.appendChild(ballsEl);
-      row.appendChild(timeEl);
-      list.appendChild(row);
-    });
-  }
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
 
-  function clearHistory() {
-    history = [];
-    localStorage.removeItem('lotto-history');
-    renderHistory();
-  }
+        const setProgress = (percent) => {
+            const offset = circumference - (percent / 100 * circumference);
+            progressCircle.style.strokeDashoffset = offset;
+            progressPercent.innerText = `${Math.round(percent)}%`;
+        };
 
-  /* ─── INIT ─── */
-  renderHistory();
-</script>
-</body>
-</html>
+        const statuses = [
+            "Initializing neural fashion core...",
+            "Decoding fabric textures...",
+            "Analyzing silhouette symmetry...",
+            "Matching chromatic harmonies...",
+            "Identifying accessory metadata...",
+            "Referencing 2024 runway trends...",
+            "Synthesizing style score...",
+            "Finalizing your glam profile..."
+        ];
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 2;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                statusUpdate.innerText = "Analysis Complete!";
+            }
+            setProgress(progress);
+
+            // Update status text based on progress
+            const statusIdx = Math.floor((progress / 100) * statuses.length);
+            if(statuses[statusIdx] && progress < 100) {
+                statusUpdate.innerText = statuses[statusIdx];
+            }
+        }, 150);
+
+        // Simple mouse interaction for depth effect
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+            const container = document.querySelector('main > div:nth-child(2)');
+            if(container) {
+                container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+    </script>
+</body></html>
