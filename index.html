@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로또 번호 추첨기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #d4a017;
+    --gold-light: #f0c040;
+    --gold-dim: #8a6810;
+    --black: #080808;
+    --dark: #0f0f0f;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --text: #e8e0d0;
+    --text-dim: #7a7060;
+
+    --ball-y: #fbc400;
+    --ball-b: #006699;
+    --ball-r: #cc0000;
+    --ball-g: #555555;
+    --ball-n: #0a8a50;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === BACKGROUND === */
+  .bg {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,130,10,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 10% 100%, rgba(0,40,80,0.15) 0%, transparent 50%),
+      var(--black);
+  }
+  .bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* === STARS === */
+  .stars {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: rgba(212,160,23,0.4);
+    animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  /* === LAYOUT === */
+  .wrapper {
+    position: relative; z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+  }
+
+  /* === HEADER === */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .header-eyebrow {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.35em;
+    font-size: 0.8rem;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  .header-title {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 900;
+    font-size: clamp(2.4rem, 8vw, 4.2rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #f0c040 0%, #d4a017 40%, #a07810 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .header-sub {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .header-line {
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto 0;
+  }
+
+  /* === CARD === */
+  .card {
+    background: var(--surface);
+    border: 1px solid rgba(212,160,23,0.1);
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.02),
+      0 8px 40px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    margin-bottom: 24px;
+  }
+
+  /* === SECTION LABEL === */
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    color: var(--gold-dim);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(212,160,23,0.15);
+  }
+
+  /* === BALLS DISPLAY === */
+  .balls-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-height: 100px;
+  }
+
+  .ball-slot {
+    width: 78px; height: 78px;
+    border-radius: 50%;
+    border: 2px dashed rgba(212,160,23,0.18);
+    background: rgba(255,255,255,0.02);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .ball-slot.bonus {
+    border-color: rgba(255,255,255,0.1);
+    margin-left: 8px;
+  }
+
+  .ball-slot.bonus::before {
+    content: 'BONUS';
+    position: absolute;
+    top: -22px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+  }
+
+  .separator {
+    font-size: 1.4rem;
+    color: rgba(212,160,23,0.3);
+    font-weight: 300;
+    margin: 0 4px;
+    align-self: center;
+    margin-top: 4px;
+  }
+
+  .ball {
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+    position: relative;
+    cursor: default;
+    animation: ballPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    box-shadow:
+      inset -3px -3px 8px rgba(0,0,0,0.35),
+      inset 4px 4px 10px rgba(255,255,255,0.25),
+      0 6px 20px rgba(0,0,0,0.5);
+  }
+
+  .ball::after {
+    content: '';
+    position: absolute;
+    top: 14%; left: 20%;
+    width: 28%; height: 18%;
+    background: rgba(255,255,255,0.35);
+    border-radius: 50%;
+    transform: rotate(-30deg);
+    filter: blur(2px);
+  }
+
+  .ball.c-yellow { background: radial-gradient(circle at 38% 35%, #ffe566, #fbc400 55%, #c8960a); }
+  .ball.c-blue   { background: radial-gradient(circle at 38% 35%, #4da8d4, #0066aa 55%, #004477); }
+  .ball.c-red    { background: radial-gradient(circle at 38% 35%, #f06060, #cc0000 55%, #880000); }
+  .ball.c-gray   { background: radial-gradient(circle at 38% 35%, #999, #555 55%, #333); }
+  .ball.c-green  { background: radial-gradient(circle at 38% 35%, #40c880, #0a8a50 55%, #065530); }
+
+  @keyframes ballPop {
+    0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60%  { transform: scale(1.1) rotate(10deg); opacity: 1; }
+    80%  { transform: scale(0.95) rotate(-5deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* === BUTTON === */
+  .btn-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    position: relative;
+    padding: 0 40px;
+    height: 56px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    overflow: hidden;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #f0c040, #d4a017 50%, #b08010);
+    color: #1a1000;
+    box-shadow: 0 4px 20px rgba(212,160,23,0.35), 0 1px 0 rgba(255,255,255,0.15) inset;
+    min-width: 180px;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 6px 30px rgba(212,160,23,0.55), 0 1px 0 rgba(255,255,255,0.15) inset;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .btn-secondary:hover {
+    color: var(--gold-light);
+    border-color: rgba(212,160,23,0.25);
+  }
+
+  .btn-ripple {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    transform: scale(0); opacity: 0;
+    transition: transform 0.5s, opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .btn-primary:active .btn-ripple {
+    transform: scale(2.5); opacity: 1;
+    transition: none;
+  }
+
+  /* === STATUS TEXT === */
+  .status {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-top: 20px;
+    min-height: 20px;
+    letter-spacing: 0.04em;
+    transition: color 0.3s;
+  }
+
+  .status.highlight { color: var(--gold-light); }
+
+  /* === NUMBER LEGEND === */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* === HISTORY === */
+  .history-card { display: none; }
+  .history-card.visible { display: block; }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .history-list::-webkit-scrollbar { width: 4px; }
+  .history-list::-webkit-scrollbar-track { background: transparent; }
+  .history-list::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    animation: fadeSlide 0.4s ease forwards;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .history-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--gold-dim);
+    min-width: 24px;
+  }
+
+  .history-balls {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .mini-ball {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.75rem;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: inset -1px -1px 3px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,255,255,0.2);
+  }
+
+  .mini-sep {
+    font-size: 0.8rem;
+    color: rgba(212,160,23,0.25);
+    margin: 0 1px;
+  }
+
+  .history-time {
+    margin-left: auto;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .history-clear {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+
+  .btn-text {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.2s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .btn-text:hover { color: #cc5555; }
+
+  /* === CONFETTI === */
+  .confetti-layer {
+    position: fixed; inset: 0; z-index: 100;
+    pointer-events: none; overflow: hidden;
+  }
+
+  .conf-piece {
+    position: absolute;
+    width: 8px; height: 10px;
+    top: -20px;
+    border-radius: 2px;
+    animation: confFall var(--dur, 1.5s) ease-in var(--delay, 0s) forwards;
+    transform-origin: center;
+  }
+
+  @keyframes confFall {
+    0%   { transform: translateY(0) rotate(0deg) scaleX(1); opacity: 1; }
+    50%  { transform: translateY(50vh) rotate(360deg) scaleX(-1); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) scaleX(1); opacity: 0; }
+  }
+
+  /* === SETTINGS === */
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+
+  .toggle {
+    position: relative;
+    width: 40px; height: 22px;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .toggle-slider::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    top: 2px; left: 2px;
+    transition: transform 0.3s, background 0.3s;
+  }
+
+  .toggle input:checked + .toggle-slider { background: var(--gold-dim); border-color: var(--gold); }
+  .toggle input:checked + .toggle-slider::after {
+    transform: translateX(18px);
+    background: var(--gold-light);
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 480px) {
+    .card { padding: 28px 18px; }
+    .ball-slot { width: 56px; height: 56px; }
+    .ball { width: 52px; height: 52px; font-size: 1.3rem; }
+    .balls-row { gap: 7px; }
+    .separator { display: none; }
+    .btn-primary { min-width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="stars" id="stars"></div>
+<div class="confetti-layer" id="confetti"></div>
+
+<div class="wrapper">
+  <header class="header">
+    <div class="header-eyebrow">Korean Lottery · 1~45</div>
+    <h1 class="header-title">로또 번호 추첨기</h1>
+    <p class="header-sub">6개의 행운의 숫자를 뽑아보세요</p>
+    <div class="header-line"></div>
+  </header>
+
+  <div class="card">
+    <div class="section-label">번호 추첨</div>
+
+    <div class="settings-row">
+      <label class="toggle-group">
+        <span>보너스 번호</span>
+        <label class="toggle">
+          <input type="checkbox" id="toggleBonus" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </label>
+      <label class="toggle-group">
+        <span>순서 정렬</span>
+        <label class="toggle">
+          <input type="checkbox" id="toggleSort">
+          <span class="toggle-slider"></span>
+        </label>
+      </label>
+    </div>
+
+    <div class="balls-row" id="ballsRow">
+      <div class="ball-slot" id="slot0"></div>
+      <div class="ball-slot" id="slot1"></div>
+      <div class="ball-slot" id="slot2"></div>
+      <div class="ball-slot" id="slot3"></div>
+      <div class="ball-slot" id="slot4"></div>
+      <div class="ball-slot" id="slot5"></div>
+      <div class="separator" id="bonusSep">+</div>
+      <div class="ball-slot bonus" id="slotBonus"></div>
+    </div>
+
+    <p class="status" id="status">버튼을 눌러 번호를 추첨하세요</p>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="drawBtn" onclick="draw()">
+        <span class="btn-ripple"></span>
+        ✦ 번호 추첨
+      </button>
+      <button class="btn btn-secondary" id="resetBtn" onclick="reset()" style="display:none">
+        다시 추첨
+      </button>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fbc400"></div>1–10</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0066aa"></div>11–20</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#cc0000"></div>21–30</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#555"></div>31–40</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0a8a50"></div>41–45</div>
+    </div>
+  </div>
+
+  <div class="card history-card" id="historyCard">
+    <div class="section-label">추첨 기록</div>
+    <div class="history-list" id="historyList"></div>
+    <div class="history-clear">
+      <button class="btn-text" onclick="clearHistory()">기록 지우기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ─── STARS ─── */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--delay:${Math.random()*4}s;opacity:${0.1+Math.random()*0.5};`;
+    starsEl.appendChild(s);
+  }
+
+  /* ─── STATE ─── */
+  let history = JSON.parse(localStorage.getItem('lotto-history') || '[]');
+  let drawing = false;
+
+  /* ─── COLORS ─── */
+  function ballClass(n) {
+    if (n <= 10) return 'c-yellow';
+    if (n <= 20) return 'c-blue';
+    if (n <= 30) return 'c-red';
+    if (n <= 40) return 'c-gray';
+    return 'c-green';
+  }
+
+  function colorOf(n) {
+    if (n <= 10) return 'radial-gradient(circle at 38% 35%,#ffe566,#fbc400 55%,#c8960a)';
+    if (n <= 20) return 'radial-gradient(circle at 38% 35%,#4da8d4,#0066aa 55%,#004477)';
+    if (n <= 30) return 'radial-gradient(circle at 38% 35%,#f06060,#cc0000 55%,#880000)';
+    if (n <= 40) return 'radial-gradient(circle at 38% 35%,#999,#555 55%,#333)';
+    return 'radial-gradient(circle at 38% 35%,#40c880,#0a8a50 55%,#065530)';
+  }
+
+  /* ─── RANDOM ─── */
+  function pickNumbers(count, max) {
+    const pool = Array.from({length: max}, (_, i) => i + 1);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, count);
+  }
+
+  /* ─── BALL DOM ─── */
+  function createBall(n) {
+    const el = document.createElement('div');
+    el.className = `ball ${ballClass(n)}`;
+    el.textContent = n;
+    return el;
+  }
+
+  /* ─── DRAW ─── */
+  async function draw() {
+    if (drawing) return;
+    drawing = true;
+
+    const doSort   = document.getElementById('toggleSort').checked;
+    const doBonus  = document.getElementById('toggleBonus').checked;
+    const drawBtn  = document.getElementById('drawBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status   = document.getElementById('status');
+
+    drawBtn.disabled = true;
+    status.textContent = '추첨 중...';
+    status.classList.remove('highlight');
+
+    document.getElementById('bonusSep').style.display = doBonus ? '' : 'none';
+    document.getElementById('slotBonus').style.display = doBonus ? '' : 'none';
+
+    // Clear slots
+    for (let i = 0; i <= 6; i++) {
+      const el = document.getElementById(i < 6 ? `slot${i}` : 'slotBonus');
+      if (el) el.innerHTML = '';
+    }
+
+    // Pick numbers
+    const all = pickNumbers(doBonus ? 7 : 6, 45);
+    let main = all.slice(0, 6);
+    const bonus = all[6];
+    if (doSort) main = [...main].sort((a,b) => a-b);
+
+    // Animate balls sequentially
+    for (let i = 0; i < 6; i++) {
+      await wait(doSort ? 280 : 320);
+      const slot = document.getElementById(`slot${i}`);
+      slot.innerHTML = '';
+      const ball = createBall(main[i]);
+      slot.appendChild(ball);
+    }
+
+    if (doBonus) {
+      await wait(420);
+      const slotB = document.getElementById('slotBonus');
+      slotB.innerHTML = '';
+      slotB.appendChild(createBall(bonus));
+    }
+
+    await wait(200);
+
+    status.textContent = doBonus
+      ? `당첨번호: ${main.join(', ')} + 보너스 ${bonus}`
+      : `당첨번호: ${main.join(', ')}`;
+    status.classList.add('highlight');
+
+    drawBtn.style.display = 'none';
+    resetBtn.style.display = '';
+
+    // Confetti
+    burst();
+
+    // History
+    saveHistory(main, doBonus ? bonus : null);
+
+    drawing = false;
+  }
+
+  function wait(ms) {
+    return new Promise(res => setTimeout(res, ms));
+  }
+
+  function reset() {
+    document.getElementById('drawBtn').disabled = false;
+    document.getElementById('drawBtn').style.display = '';
+    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('status').textContent = '버튼을 눌러 번호를 추첨하세요';
+    document.getElementById('status').classList.remove('highlight');
+    for (let i = 0; i < 6; i++) document.getElementById(`slot${i}`).innerHTML = '';
+    document.getElementById('slotBonus').innerHTML = '';
+  }
+
+  /* ─── CONFETTI ─── */
+  function burst() {
+    const layer = document.getElementById('confetti');
+    layer.innerHTML = '';
+    const colors = ['#fbc400','#0066aa','#cc0000','#0a8a50','#d4a017','#f0c040','#fff'];
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.className = 'conf-piece';
+      p.style.cssText = `
+        left: ${10 + Math.random()*80}%;
+        background: ${colors[i % colors.length]};
+        --dur: ${0.9 + Math.random()*1.2}s;
+        --delay: ${Math.random()*0.6}s;
+        transform: rotate(${Math.random()*360}deg);
+        width: ${5+Math.random()*8}px;
+        height: ${6+Math.random()*10}px;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      `;
+      layer.appendChild(p);
+    }
+    setTimeout(() => layer.innerHTML = '', 2500);
+  }
+
+  /* ─── HISTORY ─── */
+  function saveHistory(main, bonus) {
+    const entry = { main, bonus, time: new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}) };
+    history.unshift(entry);
+    if (history.length > 20) history.pop();
+    localStorage.setItem('lotto-history', JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const card = document.getElementById('historyCard');
+    const list = document.getElementById('historyList');
+    if (!history.length) { card.classList.remove('visible'); return; }
+    card.classList.add('visible');
+
+    list.innerHTML = '';
+    history.forEach((entry, i) => {
+      const row = document.createElement('div');
+      row.className = 'history-item';
+
+      const numEl = document.createElement('div');
+      numEl.className = 'history-num';
+      numEl.textContent = `#${i+1}`;
+
+      const ballsEl = document.createElement('div');
+      ballsEl.className = 'history-balls';
+
+      entry.main.forEach(n => {
+        const b = document.createElement('div');
+        b.className = 'mini-ball';
+        b.style.background = colorOf(n);
+        b.textContent = n;
+        ballsEl.appendChild(b);
+      });
+
+      if (entry.bonus != null) {
+        const sep = document.createElement('span');
+        sep.className = 'mini-sep'; sep.textContent = '+';
+        ballsEl.appendChild(sep);
+        const b = document.createElement('div');
+        b.className = 'mini-ball';
+        b.style.background = colorOf(entry.bonus);
+        b.textContent = entry.bonus;
+        ballsEl.appendChild(b);
+      }
+
+      const timeEl = document.createElement('div');
+      timeEl.className = 'history-time';
+      timeEl.textContent = entry.time;
+
+      row.appendChild(numEl);
+      row.appendChild(ballsEl);
+      row.appendChild(timeEl);
+      list.appendChild(row);
+    });
+  }
+
+  function clearHistory() {
+    history = [];
+    localStorage.removeItem('lotto-history');
+    renderHistory();
+  }
+
+  /* ─── INIT ─── */
+  renderHistory();
+</script>
+</body>
+</html>
