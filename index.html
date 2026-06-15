@@ -11,18 +11,47 @@
     --gold: #d4a017;
     --gold-light: #f0c040;
     --gold-dim: #8a6810;
-    --black: #080808;
-    --dark: #0f0f0f;
+    --bg-base: #080808;
     --surface: #161616;
     --surface2: #1e1e1e;
     --text: #e8e0d0;
     --text-dim: #7a7060;
+    --card-border: rgba(212,160,23,0.1);
+    --card-shadow: rgba(0,0,0,0.6);
+    --slot-bg: rgba(255,255,255,0.02);
+    --slot-border: rgba(212,160,23,0.18);
+    --slot-bonus-border: rgba(255,255,255,0.1);
+    --legend-border: rgba(255,255,255,0.05);
+    --history-border: rgba(255,255,255,0.04);
+    --bg-grad1: rgba(180,130,10,0.08);
+    --bg-grad2: rgba(0,40,80,0.15);
+    --star-opacity: 1;
+    --btn-sec-bg: #1e1e1e;
+    --btn-sec-border: rgba(255,255,255,0.07);
+    --theme-transition: background 0.35s, color 0.35s, border-color 0.35s, box-shadow 0.35s;
+  }
 
-    --ball-y: #fbc400;
-    --ball-b: #006699;
-    --ball-r: #cc0000;
-    --ball-g: #555555;
-    --ball-n: #0a8a50;
+  html[data-theme="light"] {
+    --gold: #b07808;
+    --gold-light: #c08818;
+    --gold-dim: #987020;
+    --bg-base: #f7f2e8;
+    --surface: #ffffff;
+    --surface2: #f0ebe0;
+    --text: #1a1200;
+    --text-dim: #806840;
+    --card-border: rgba(160,120,10,0.15);
+    --card-shadow: rgba(0,0,0,0.1);
+    --slot-bg: rgba(0,0,0,0.03);
+    --slot-border: rgba(160,120,10,0.25);
+    --slot-bonus-border: rgba(0,0,0,0.12);
+    --legend-border: rgba(0,0,0,0.08);
+    --history-border: rgba(0,0,0,0.06);
+    --bg-grad1: rgba(200,150,10,0.07);
+    --bg-grad2: rgba(0,60,120,0.05);
+    --star-opacity: 0;
+    --btn-sec-bg: #ede8dc;
+    --btn-sec-border: rgba(0,0,0,0.1);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,20 +59,22 @@
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--black);
+    background: var(--bg-base);
     color: var(--text);
     font-family: 'Noto Sans KR', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: var(--theme-transition);
   }
 
   /* === BACKGROUND === */
   .bg {
     position: fixed; inset: 0; z-index: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,130,10,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 10% 100%, rgba(0,40,80,0.15) 0%, transparent 50%),
-      var(--black);
+      radial-gradient(ellipse 80% 60% at 50% 0%, var(--bg-grad1) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 10% 100%, var(--bg-grad2) 0%, transparent 50%),
+      var(--bg-base);
+    transition: background 0.35s;
   }
   .bg::after {
     content: '';
@@ -64,6 +95,8 @@
     background: rgba(212,160,23,0.4);
     animation: twinkle var(--dur, 3s) ease-in-out infinite;
     animation-delay: var(--delay, 0s);
+    opacity: var(--star-opacity);
+    transition: opacity 0.5s;
   }
 
   @keyframes twinkle {
@@ -123,14 +156,14 @@
   /* === CARD === */
   .card {
     background: var(--surface);
-    border: 1px solid rgba(212,160,23,0.1);
+    border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 40px 32px;
     box-shadow:
-      0 0 0 1px rgba(255,255,255,0.02),
-      0 8px 40px rgba(0,0,0,0.6),
+      0 8px 40px var(--card-shadow),
       inset 0 1px 0 rgba(255,255,255,0.04);
     margin-bottom: 24px;
+    transition: var(--theme-transition);
   }
 
   /* === SECTION LABEL === */
@@ -164,15 +197,15 @@
   .ball-slot {
     width: 78px; height: 78px;
     border-radius: 50%;
-    border: 2px dashed rgba(212,160,23,0.18);
-    background: rgba(255,255,255,0.02);
+    border: 2px dashed var(--slot-border);
+    background: var(--slot-bg);
     display: flex; align-items: center; justify-content: center;
     position: relative;
-    transition: border-color 0.3s;
+    transition: border-color 0.35s, background 0.35s;
   }
 
   .ball-slot.bonus {
-    border-color: rgba(255,255,255,0.1);
+    border-color: var(--slot-bonus-border);
     margin-left: 8px;
   }
 
@@ -281,15 +314,16 @@
   }
 
   .btn-secondary {
-    background: var(--surface2);
+    background: var(--btn-sec-bg);
     color: var(--text-dim);
-    border: 1px solid rgba(255,255,255,0.07);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border: 1px solid var(--btn-sec-border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    transition: var(--theme-transition), transform 0.15s;
   }
 
   .btn-secondary:hover {
     color: var(--gold-light);
-    border-color: rgba(212,160,23,0.25);
+    border-color: rgba(180,130,10,0.3);
   }
 
   .btn-ripple {
@@ -326,7 +360,8 @@
     flex-wrap: wrap;
     margin-top: 28px;
     padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid var(--legend-border);
+    transition: border-color 0.35s;
   }
 
   .legend-item {
@@ -367,8 +402,9 @@
     padding: 12px 16px;
     background: var(--surface2);
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.04);
+    border: 1px solid var(--history-border);
     animation: fadeSlide 0.4s ease forwards;
+    transition: var(--theme-transition);
   }
 
   @keyframes fadeSlide {
@@ -483,11 +519,11 @@
 
   .toggle-slider {
     position: absolute; inset: 0;
-    background: var(--surface2);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--btn-sec-bg);
+    border: 1px solid var(--btn-sec-border);
     border-radius: 11px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s, border-color 0.3s;
   }
 
   .toggle-slider::after {
@@ -506,6 +542,41 @@
     background: var(--gold-light);
   }
 
+  /* === THEME TOGGLE BUTTON === */
+  .theme-btn {
+    position: fixed;
+    top: 20px; right: 20px;
+    z-index: 200;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px var(--card-shadow);
+    transition: var(--theme-transition), transform 0.2s;
+    outline: none;
+    overflow: hidden;
+  }
+
+  .theme-btn:hover { transform: scale(1.1) rotate(15deg); }
+  .theme-btn:active { transform: scale(0.95); }
+
+  .theme-btn .icon-sun,
+  .theme-btn .icon-moon {
+    position: absolute;
+    width: 20px; height: 20px;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+  }
+
+  /* dark mode: show moon, hide sun */
+  .theme-btn .icon-sun  { transform: rotate(-90deg) scale(0); opacity: 0; }
+  .theme-btn .icon-moon { transform: rotate(0deg) scale(1);   opacity: 1; }
+
+  /* light mode: show sun, hide moon */
+  html[data-theme="light"] .theme-btn .icon-sun  { transform: rotate(0deg) scale(1);    opacity: 1; }
+  html[data-theme="light"] .theme-btn .icon-moon { transform: rotate(90deg) scale(0);   opacity: 0; }
+
   /* === RESPONSIVE === */
   @media (max-width: 480px) {
     .card { padding: 28px 18px; }
@@ -514,6 +585,7 @@
     .balls-row { gap: 7px; }
     .separator { display: none; }
     .btn-primary { min-width: 140px; }
+    .theme-btn { top: 12px; right: 12px; }
   }
 </style>
 </head>
@@ -522,6 +594,25 @@
 <div class="bg"></div>
 <div class="stars" id="stars"></div>
 <div class="confetti-layer" id="confetti"></div>
+
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="테마 변경" aria-label="다크/라이트 모드 전환">
+  <!-- Sun icon -->
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1"  x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22"  x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+  <!-- Moon icon -->
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
 
 <div class="wrapper">
   <header class="header">
@@ -593,6 +684,25 @@
 </div>
 
 <script>
+  /* ─── THEME ─── */
+  (function() {
+    const saved = localStorage.getItem('lotto-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  })();
+
+  function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('lotto-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('lotto-theme', 'light');
+    }
+  }
+
   /* ─── STARS ─── */
   const starsEl = document.getElementById('stars');
   for (let i = 0; i < 70; i++) {
