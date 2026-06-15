@@ -1,66 +1,65 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head>
+<html class="light" lang="ko"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>GLAM.AI | Style Analysis</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Hanken+Grotesk:wght@400;600&family=Space+Grotesk:wght@700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Space+Grotesk:wght@100..900&family=Syne:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
             "colors": {
-                    "surface-variant": "#353436",
-                    "secondary": "#ffaedd",
-                    "secondary-fixed": "#ffd8eb",
-                    "secondary-fixed-dim": "#ffaedd",
-                    "on-tertiary-container": "#c4faff",
-                    "surface-dim": "#131314",
-                    "on-secondary-fixed-variant": "#880069",
-                    "inverse-surface": "#e5e2e3",
-                    "surface-container": "#201f20",
-                    "on-primary-fixed-variant": "#0035be",
-                    "tertiary-container": "#007981",
-                    "on-error-container": "#ffdad6",
-                    "primary-fixed": "#dde1ff",
-                    "background": "#131314",
-                    "outline": "#8e90a2",
-                    "on-tertiary": "#00363a",
-                    "on-background": "#e5e2e3",
-                    "outline-variant": "#434656",
-                    "inverse-primary": "#124af0",
-                    "surface-container-low": "#1c1b1c",
-                    "primary-container": "#2e5bff",
-                    "on-primary-fixed": "#001356",
-                    "surface-container-high": "#2a2a2b",
-                    "primary": "#b8c3ff",
-                    "on-primary": "#002388",
-                    "error": "#ffb4ab",
-                    "on-tertiary-fixed": "#002022",
-                    "on-secondary-container": "#540040",
-                    "surface": "#131314",
-                    "on-secondary": "#600049",
-                    "on-surface": "#e5e2e3",
-                    "tertiary-fixed-dim": "#00dbe9",
-                    "primary-fixed-dim": "#b8c3ff",
-                    "on-tertiary-fixed-variant": "#004f54",
-                    "surface-bright": "#3a393a",
-                    "on-surface-variant": "#c4c5d9",
-                    "inverse-on-surface": "#313031",
-                    "surface-container-highest": "#353436",
-                    "surface-container-lowest": "#0e0e0f",
-                    "on-primary-container": "#efefff",
-                    "surface-tint": "#b8c3ff",
-                    "tertiary-fixed": "#7df4ff",
-                    "secondary-container": "#ff36c8",
-                    "tertiary": "#00dbe9",
-                    "on-error": "#690005",
-                    "error-container": "#93000a",
-                    "on-secondary-fixed": "#3b002c"
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-background": "#1a1c1c",
+                    "background": "#f9f9f9",
+                    "secondary": "#5d5f5f",
+                    "primary-container": "#1b1b1b",
+                    "primary": "#000000",
+                    "on-primary-fixed": "#1b1b1b",
+                    "tertiary-fixed": "#a5f1e2",
+                    "on-primary-fixed-variant": "#474747",
+                    "outline-variant": "#cfc4c5",
+                    "on-error": "#ffffff",
+                    "tertiary": "#000000",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e2e2e2",
+                    "tertiary-fixed-dim": "#8ad4c6",
+                    "primary-fixed": "#e2e2e2",
+                    "on-tertiary-fixed": "#00201c",
+                    "on-surface": "#1a1c1c",
+                    "surface-dim": "#dadada",
+                    "surface-bright": "#f9f9f9",
+                    "surface-variant": "#e2e2e2",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f3f3f3",
+                    "surface": "#f9f9f9",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#2f3131",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#005047",
+                    "surface-tint": "#5e5e5e",
+                    "on-primary-container": "#848484",
+                    "surface-container-high": "#e8e8e8",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "on-surface-variant": "#4c4546",
+                    "inverse-on-surface": "#f1f1f1",
+                    "secondary-fixed": "#e2e2e2",
+                    "inverse-primary": "#c6c6c6",
+                    "on-secondary-container": "#616363",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#00201c",
+                    "on-secondary-fixed-variant": "#454747",
+                    "outline": "#7e7576",
+                    "surface-container": "#eeeeee",
+                    "on-tertiary-container": "#469084",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "secondary-container": "#dfe0e0"
             },
             "borderRadius": {
                     "DEFAULT": "0.25rem",
@@ -69,72 +68,54 @@
                     "full": "9999px"
             },
             "spacing": {
-                    "base": "8px",
-                    "container-margin": "24px",
-                    "gutter": "16px",
-                    "section-gap": "80px"
+                    "margin-mobile": "20px",
+                    "section-gap": "120px",
+                    "unit": "8px",
+                    "gutter": "32px",
+                    "margin-desktop": "64px",
+                    "container-max": "1280px"
             },
             "fontFamily": {
-                    "headline-lg-mobile": ["Syne"],
-                    "display-xl": ["Syne"],
-                    "title-md": ["Hanken Grotesk"],
-                    "body-lg": ["Hanken Grotesk"],
-                    "body-sm": ["Hanken Grotesk"],
-                    "label-caps": ["Space Grotesk"],
-                    "headline-lg": ["Syne"]
+                    "headline-lg-mobile": ["Bodoni Moda"],
+                    "label-md": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Bodoni Moda"],
+                    "display-lg": ["Bodoni Moda"],
+                    "headline-md": ["Bodoni Moda"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"]
             },
             "fontSize": {
-                    "headline-lg-mobile": ["32px", {"lineHeight": "36px", "fontWeight": "700"}],
-                    "display-xl": ["80px", {"lineHeight": "88px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
-                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
-                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
-                    "headline-lg": ["48px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
             }
           },
         },
       }
     </script>
 <style>
-        @keyframes scanline {
-            0% { transform: translateY(-100%); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(100vh); opacity: 0; }
+        body {
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+            overflow-x: hidden;
         }
-        @keyframes orbit {
-            from { transform: rotate(0deg) translateX(120px) rotate(0deg); opacity: 0; }
-            50% { opacity: 1; }
-            to { transform: rotate(360deg) translateX(0px) rotate(-360deg); opacity: 0; }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        @keyframes pulse-glow {
-            0%, 100% { filter: drop-shadow(0 0 5px #b8c3ff) drop-shadow(0 0 10px #ffaedd); }
-            50% { filter: drop-shadow(0 0 15px #b8c3ff) drop-shadow(0 0 30px #ffaedd); }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .scanning-bar {
-            background: linear-gradient(to right, transparent, #b8c3ff, #ffaedd, #b8c3ff, transparent);
-            height: 4px;
-            width: 100%;
-            position: absolute;
-            z-index: 10;
-            filter: blur(2px);
-            animation: scanline 3s linear infinite;
-        }
-        .orbit-item {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            animation: orbit 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-        .progress-ring-circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-        .glass-blur {
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
     </style>
 <style>
@@ -143,137 +124,154 @@
     }
   </style>
 </head>
-<body class="bg-background text-on-background font-body-lg overflow-hidden">
+<body class="font-body-md text-body-md">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-container-margin h-16 shadow-[0_0_20px_rgba(184,195,255,0.2)]">
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full z-50 bg-surface docked full-width top-0 sticky border-b border-primary">
 <div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200">menu</span>
-<h1 class="font-display-xl text-headline-lg-mobile bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">GLAM.AI</h1>
+<span class="material-symbols-outlined text-primary cursor-pointer">menu</span>
+<span class="font-display-lg text-headline-md tracking-tighter text-primary">ATELIER AI</span>
 </div>
+<nav class="hidden md:flex gap-gutter items-center">
+<a class="text-primary font-bold border-b-2 border-primary font-label-md text-label-md" href="#">HOME</a>
+<a class="text-secondary font-label-md text-label-md hover:bg-surface-variant transition-colors duration-300 px-2 py-1" href="#">COLLECTIONS</a>
+<a class="text-secondary font-label-md text-label-md hover:bg-surface-variant transition-colors duration-300 px-2 py-1" href="#">STYLE AI</a>
+<a class="text-secondary font-label-md text-label-md hover:bg-surface-variant transition-colors duration-300 px-2 py-1" href="#">MAGAZINE</a>
+</nav>
 <div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">search</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">account_circle</span>
 </div>
 </header>
-<!-- Main Content: Scanner Canvas -->
-<main class="relative h-screen w-full flex flex-col items-center justify-center pt-16 pb-20">
-<!-- Background Fluid Mesh -->
-
-<!-- Scanning Visual Area -->
-<div class="relative w-full max-w-md aspect-[3/4] mx-auto overflow-hidden rounded-3xl glass-blur shadow-2xl z-20 group">
-<!-- User Uploaded Image -->
-<img class="w-full h-full object-cover opacity-80 mix-blend-luminosity grayscale group-hover:grayscale-0 transition-all duration-1000" src="screen.png" alt="Style Analysis"/>
-<!-- Scanning Elements -->
-<div class="scanning-bar"></div>
-<div class="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
-<!-- Floating Orbiting Icons -->
-<div class="orbit-item" style="animation-delay: 0s;"><span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">apparel</span></div>
-<div class="orbit-item" style="animation-delay: 0.5s;"><span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">ice_skating</span></div>
-<div class="orbit-item" style="animation-delay: 1.2s;"><span class="material-symbols-outlined text-tertiary text-4xl" style="font-variation-settings: 'FILL' 1;">watch</span></div>
-<div class="orbit-item" style="animation-delay: 1.8s;"><span class="material-symbols-outlined text-secondary text-2xl" style="font-variation-settings: 'FILL' 1;">diamond</span></div>
-<div class="orbit-item" style="animation-delay: 2.5s;"><span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">checkroom</span></div>
-<!-- Central Scanning Core Overlay -->
-<div class="absolute inset-0 flex items-center justify-center">
-<div class="relative flex items-center justify-center">
-<!-- Progress Circle -->
-<svg class="w-48 h-48">
-<circle class="text-white/5" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="4"></circle>
-<circle class="progress-ring-circle text-secondary" cx="96" cy="96" fill="transparent" id="progressCircle" r="80" stroke="currentColor" stroke-dasharray="502.65" stroke-dashoffset="502.65" stroke-linecap="round" stroke-width="4"></circle>
-</svg>
-<div class="absolute flex flex-col items-center">
-<span class="font-display-xl text-headline-lg-mobile text-white drop-shadow-lg" id="progressPercent">0%</span>
-<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Analyzing</span>
+<!-- Hero Section -->
+<main>
+<section class="relative min-h-[795px] flex flex-col md:flex-row items-center overflow-hidden">
+<div class="w-full md:w-7/12 h-[530px] md:h-[795px] relative">
+<img alt="Stylish person in high-fashion editorial pose" class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-1000" src="screen.png"/>
+<div class="absolute inset-0 bg-gradient-to-r from-background/20 to-transparent md:hidden"></div>
+</div>
+<div class="w-full md:w-5/12 px-margin-mobile md:px-margin-desktop py-12 md:py-0 flex flex-col justify-center items-start z-10">
+<div class="reveal active">
+<span class="font-label-md text-label-md tracking-[0.3em] uppercase text-secondary mb-4 block">Future of Personal Styling</span>
+<h1 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary mb-6 max-w-md">
+                        AI가 찾아주는 당신만의 퍼스널 스타일
+                    </h1>
+<p class="font-body-lg text-body-lg text-secondary mb-10 max-w-sm">
+                        키, 몸무게, 사진 한 장으로 시작하는 패션 혁명. 당신의 체형과 무드에 맞춘 완벽한 룩북을 제안합니다.
+                    </p>
+<button class="bg-primary text-on-primary font-label-md text-label-md py-4 px-10 uppercase tracking-widest hover:bg-[#0d2d27] transition-all duration-300 shadow-none hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] active:opacity-80">
+                        스타일 분석 시작하기
+                    </button>
 </div>
 </div>
+</section>
+<!-- The "Look" Cards / Features -->
+<section class="mt-section-gap px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-end mb-16">
+<div class="md:col-span-6 reveal">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-4">THE CURATOR'S EYE</h2>
+<p class="text-secondary max-w-md">단순한 추천을 넘어, 당신의 고유한 실루엣과 선호도를 분석하여 시대를 초월한 우아함을 선사합니다.</p>
+</div>
+<div class="md:col-span-6 md:text-right reveal">
+<a class="font-label-md text-label-md border-b border-primary pb-1 inline-block" href="#">EXPLORE THE TECHNOLOGY</a>
 </div>
 </div>
-<!-- Status Text -->
-<div class="mt-12 text-center z-30 px-container-margin">
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile tracking-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent mb-2">
-                GLAM.AI IS SCANNING YOUR LOOK
-            </h2>
-<div class="flex items-center justify-center gap-2">
-<div class="w-2 h-2 rounded-full bg-secondary animate-ping"></div>
-<p class="font-body-sm text-on-surface-variant italic" id="statusUpdate">Identifying silhouette structures...</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Step 1: Analyze -->
+<div class="group reveal" style="transition-delay: 100ms;">
+<div class="relative overflow-hidden aspect-[3/4] border border-primary mb-6">
+<img alt="AI Analysis Visual" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNyGyWRx3gMdpxT9tPN7t7mK2jAwlFbkNPCjOAc8j9c7S0jTOOctQYkSET4BboxXPPuFpHGccXUn9CtrTtkO0PL4sNbUtqRntTfNeKO9JgbJfXxRv4mJ16XbzEqgPEPpfolb_vfE9jCtbNS5BQo0xydbSXtpnqHT0pozexkxIZUSHlKqhE_lwkDP6Z-z7ljkeycEg9Iq9WWlQ_NcAvLFyp1Qmrectg1_Yp9FiVQGPl5wgxIMksGMz3NxAs8Jrww9iBf2mt_IlFa10"/>
+<div class="absolute top-4 left-4 bg-white px-3 py-1 font-label-md text-label-sm border border-primary">01</div>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">ANALYZE</h3>
+<p class="text-secondary font-body-md">신체 데이터와 단 한 장의 전신 사진을 통해 당신의 체형과 비율을 정밀하게 측정합니다.</p>
+</div>
+<!-- Step 2: Curate -->
+<div class="group reveal" style="transition-delay: 200ms;">
+<div class="relative overflow-hidden aspect-[3/4] border border-primary mb-6">
+<img alt="Fashion Curation" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV7tytZMDuwQNUSnH5Z6Q24u0liFpVaglEfILR-n2evuFPH5PX3k3MWyyKEM7t2hIN34G8QxLpRy-I4ZlqFaQBRZVVyXT675xzf106BUcFB10RLNYQV6Ljq2GNphfq-9OUjXOkXhaFf9rGEmdVNRGuEqtWOacGDSI31sf438R7bjo5RIWc7kG-5zhSWO5xGp7QyEhJwX9bnHPdHwmL14WMy5M-9MkDFRpQpfyF2OI3sXvPg9GZ1q9htLw39l5S9TNyl1Q-sPT-rBE"/>
+<div class="absolute top-4 left-4 bg-white px-3 py-1 font-label-md text-label-sm border border-primary">02</div>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">CURATE</h3>
+<p class="text-secondary font-body-md">전 세계 패션 아카이브에서 당신에게 가장 잘 어울리는 아이템과 스타일 테마를 선별합니다.</p>
+</div>
+<!-- Step 3: Style -->
+<div class="group reveal" style="transition-delay: 300ms;">
+<div class="relative overflow-hidden aspect-[3/4] border border-primary mb-6">
+<img alt="Final Styled Look" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6__ROQwkrfwbRkv-4xb_6vIgpkkWA7PWj6jApq_FdKDhAjU8OgbqQZ-wgwU4Gd17QZVMQ8-7eigb8pmBRucCkbDlvd3vwUE-betpEyWu57NN-eTLcBa3q7qj0ZinwnAzYGwNjnk-QrMAnNfl_AAb74-n2X_o6_eDiXEhq6uaex9pUGuU__0RIUBbamGdbSpeyjS-LEb9DjHLA2lCGk4F0lgEk2zwml2oGn78xz6zo7GHxD8DWOqh1bFLnx7sdefQkZpobSaReXzU"/>
+<div class="absolute top-4 left-4 bg-white px-3 py-1 font-label-md text-label-sm border border-primary">03</div>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">STYLE</h3>
+<p class="text-secondary font-body-md">선택된 아이템들을 조합하여 TPO에 맞는 완벽한 룩북을 완성하고 제안합니다.</p>
 </div>
 </div>
-<!-- Style Tags Loading -->
-<div class="mt-8 flex flex-wrap justify-center gap-3 px-container-margin z-30">
-<div class="px-4 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary font-label-caps text-label-caps animate-pulse">VAPORWAVE</div>
-<div class="px-4 py-1 rounded-full border border-secondary/30 bg-secondary/5 text-secondary font-label-caps text-label-caps animate-pulse" style="animation-delay: 0.2s">AVANT-GARDE</div>
-<div class="px-4 py-1 rounded-full border border-tertiary/30 bg-tertiary/5 text-tertiary font-label-caps text-label-caps animate-pulse" style="animation-delay: 0.4s">CYBERPUNK</div>
+</section>
+<!-- Full Width Atmosphere Section -->
+<section class="mt-section-gap relative h-[618px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-primary/10"></div>
 </div>
+<div class="relative z-10 text-center px-margin-mobile reveal">
+<h2 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary mb-6 italic">Style is a Language.</h2>
+<p class="font-label-md text-label-md tracking-widest text-primary uppercase mb-8">당신의 무드를 데이터로 표현하세요</p>
+<button class="border border-primary text-primary font-label-md text-label-md py-4 px-10 uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all duration-500">
+                    지금 무료로 시작하기
+                </button>
+</div>
+</section>
+<!-- Floating Chips / Tags Display -->
+<section class="mt-section-gap px-margin-mobile md:px-margin-desktop mb-24">
+<div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#MINIMALIST</span>
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#OLD_MONEY</span>
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#STREETWEAR</span>
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#AVANT_GARDE</span>
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#BOHEMIAN</span>
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#WORKWEAR</span>
+<span class="px-6 py-2 bg-surface-container border border-primary font-label-md text-label-sm uppercase hover:bg-primary hover:text-on-primary transition-colors cursor-default">#FRENCH_CHIC</span>
+</div>
+</section>
 </main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface-container/80 backdrop-blur-2xl border-t border-white/10 rounded-t-xl h-20 px-4 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(255,174,221,0.15)]">
-<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary hover:opacity-100 transition-all active:scale-90 duration-300" href="#">
-<span class="material-symbols-outlined">home</span>
-<span class="font-label-caps text-label-caps">Home</span>
-</a>
-<a class="flex flex-col items-center justify-center text-secondary bg-secondary/10 rounded-xl py-1 px-3 scale-110 transition-all active:scale-90 duration-300" href="#">
-<span class="material-symbols-outlined">auto_awesome</span>
-<span class="font-label-caps text-label-caps">Style</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary hover:opacity-100 transition-all active:scale-90 duration-300" href="#">
-<span class="material-symbols-outlined">checkroom</span>
-<span class="font-label-caps text-label-caps">Closet</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary hover:opacity-100 transition-all active:scale-90 duration-300" href="#">
-<span class="material-symbols-outlined">person</span>
-<span class="font-label-caps text-label-caps">Profile</span>
-</a>
-</nav>
+<!-- Footer -->
+<footer class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-12 w-full mt-section-gap bg-primary text-on-primary border-t border-outline">
+<div class="mb-8 md:mb-0">
+<span class="font-display-lg text-headline-sm text-on-primary tracking-tighter">ATELIER AI</span>
+<p class="font-label-sm text-label-sm mt-4 opacity-70">© 2024 ATELIER AI. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="flex flex-col md:flex-row gap-gutter items-center">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-primary opacity-70 hover:opacity-100 transition-opacity" href="#">PRIVACY</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-primary opacity-70 hover:opacity-100 transition-opacity" href="#">TERMS</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-primary opacity-70 hover:opacity-100 transition-opacity" href="#">STYLING GUIDE</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-primary opacity-70 hover:opacity-100 transition-opacity" href="#">SUPPORT</a>
+</div>
+<div class="mt-8 md:mt-0 flex gap-4">
+<span class="material-symbols-outlined text-on-primary cursor-pointer opacity-70 hover:opacity-100">language</span>
+<span class="material-symbols-outlined text-on-primary cursor-pointer opacity-70 hover:opacity-100">share</span>
+</div>
+</footer>
 <script>
-        const progressCircle = document.getElementById('progressCircle');
-        const progressPercent = document.getElementById('progressPercent');
-        const statusUpdate = document.getElementById('statusUpdate');
-        const radius = progressCircle.r.baseVal.value;
-        const circumference = radius * 2 * Math.PI;
-
-        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-        progressCircle.style.strokeDashoffset = circumference;
-
-        const setProgress = (percent) => {
-            const offset = circumference - (percent / 100 * circumference);
-            progressCircle.style.strokeDashoffset = offset;
-            progressPercent.innerText = `${Math.round(percent)}%`;
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1
         };
 
-        const statuses = [
-            "Initializing neural fashion core...",
-            "Decoding fabric textures...",
-            "Analyzing silhouette symmetry...",
-            "Matching chromatic harmonies...",
-            "Identifying accessory metadata...",
-            "Referencing 2024 runway trends...",
-            "Synthesizing style score...",
-            "Finalizing your glam profile..."
-        ];
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
 
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 2;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(interval);
-                statusUpdate.innerText = "Analysis Complete!";
-            }
-            setProgress(progress);
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-            // Update status text based on progress
-            const statusIdx = Math.floor((progress / 100) * statuses.length);
-            if(statuses[statusIdx] && progress < 100) {
-                statusUpdate.innerText = statuses[statusIdx];
-            }
-        }, 150);
-
-        // Simple mouse interaction for depth effect
-        document.addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
-            const container = document.querySelector('main > div:nth-child(2)');
-            if(container) {
-                container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-            }
+        // Subtle parallax effect for images
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            document.querySelectorAll('img').forEach(img => {
+                const speed = 0.05;
+                const yPos = -(scrolled * speed);
+                img.style.transform = `translateY(${yPos}px)`;
+            });
         });
     </script>
 </body></html>
